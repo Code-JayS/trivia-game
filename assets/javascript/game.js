@@ -13,14 +13,14 @@ var round = -1;
 var correctAnswer = "";
 var userGuess = "";
 const questions = [
-  { name: "dog", question: "is this a dog gif?", a: "no", b: "yes", c: "its a snake", d: "its a monkey", correct: "b" },
-  { name: "cat", question: "is this a cat gif?", a: "no", b: "Yes", c: "its a bird", d: "its a dolphin", correct: "b" },
-  { name: "bird", question: "is this a cat gif?", a: "no", b: "Yes", c: "its a bird", d: "its a dolphin", correct: "c" },
-  { name: "dolphin", question: "is this a cat gif?", a: "no", b: "Yes", c: "its a bird", d: "its a dolphin", correct: "d" },
-  { name: "bunny", question: "is this a cat gif?", a: "no", b: "Yes", c: "its a bird", d: "its a dolphin", correct: "a" },
-  { name: "snake", question: "is this a dog gif?", a: "no", b: "yes", c: "its a snake", d: "its a monkey", correct: "c" },
-  { name: "monkey", question: "is this a dog gif?", a: "no", b: "yes", c: "its a snake", d: "its a monkey", correct: "d" },
-  { name: "shark", question: "is this a dog gif?", a: "no", b: "yes", c: "its a snake", d: "its a monkey", correct: "a" },
+  { name: "dog", question: "Is this a dog gif?", a: "no", b: "yes", c: "It's a snake", d: "It's a monkey", correct: "b" },
+  { name: "cat", question: "Is this a cat gif?", a: "no", b: "Yes", c: "It's a bird", d: "It's a dolphin", correct: "b" },
+  { name: "owl", question: "Is this a kangaroo gif?", a: "It's a rabbit", b: "Yes", c: "It's a bird", d: "It's a dolphin", correct: "c" },
+  { name: "panda", question: "Is this a cat gif?", a: "a pinecone?", b: "Yes", c: "It's a bird", d: "It's a panda", correct: "d" },
+  { name: "rabbit", question: "Is this a cat gif?", a: "It's a rabbit", b: "Yes", c: "It's a bird", d: "It's a dolphin", correct: "a" },
+  { name: "penguin", question: "Is this a dog gif?", a: "It's an Elephant", b: "yes", c: "It's a penguin", d: "It's a monkey", correct: "c" },
+  { name: "monkey", question: "Is this a koala gif?", a: "It's a Velociraptor", b: "yes", c: "It's a snake", d: "It's a monkey", correct: "d" },
+  { name: "shark", question: "Is this a dog gif?", a: "Is it shark week? because that is a shark.", b: "yes", c: "its a snake", d: "its a monkey", correct: "a" },
 ];
 
 
@@ -32,7 +32,7 @@ const questions = [
 function backgroundImage() {
   var currentImage = questions[round].name;
   // Storing our giphy API URL for a random cat image
-  var queryURL = "https://api.giphy.com/v1/gifs/random?api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9&tag="+ currentImage +"rating=g";
+  var queryURL = "https://api.giphy.com/v1/gifs/random?api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9&tag=" + currentImage;
 
   // Perfoming an AJAX GET request to our queryURL
   $.ajax({
@@ -41,17 +41,19 @@ function backgroundImage() {
   })
 
     // After the data from the AJAX request comes back
-    .then(function(response) {
-console.log(response)
+    .then(function (response) {
+      console.log(response)
       // Saving the image_original_url property
       var imageUrl = response.data.image_original_url;
 
-      $('.jumbotron').css({
+      $('#gifLanding').css({
         'background-size': 'contain',
-        'background-image': 'url('+ imageUrl + ')'});
+        'background-repeat': 'no-repeat',
+        'background-image': 'url(' + imageUrl + ')'
+      });
     });
-      
-    };
+
+};
 
 
 // start the game function called at the begining of the game.
@@ -60,17 +62,18 @@ function startButton() {
     beginRound();
     // Noise.play();
   });
-  $("#splashArea").append('<div></div>').attr("class", "text-center").append(start);
+  $("#startButton").append('<div></div>').attr("class", "text-center").append(start);
 
 };
 //******************************Dom manipulation****************************************/
 // clears the questions and reveal div
 function clearSplash() {
   $("#splashArea").empty();
+  $("#startButton").empty();
 };
 //places the question on the DOM
 function showQuestion() {
-  backgroundImage();
+
   $("#splashArea").empty();
   $("#splashArea").append('<h1 id = "question"></h1>');
   $("#splashArea").append('<br>');
@@ -81,10 +84,10 @@ function showQuestion() {
   $("#splashArea").append('<button id = "c"></button>');
   $("#splashArea").append('<br>');
   $("#splashArea").append('<button id = "d"></button>');
-  $("#a").addClass("btn btn-info answers");
-  $("#b").addClass("btn btn-info answers");
-  $("#c").addClass("btn btn-info answers");
-  $("#d").addClass("btn btn-info answers");
+  $("#a").addClass("btn btn-secondary answers");
+  $("#b").addClass("btn btn-secondary answers");
+  $("#c").addClass("btn btn-secondary answers");
+  $("#d").addClass("btn btn-secondary answers");
   // the information from the question. 
   $("#question").text(questions[round].question);
   $("#a").text(questions[round].a);
@@ -111,9 +114,6 @@ function showResult() {
   $("#splashArea").append('<h3 id = "ua-text"></h3>');
   $("#splashArea").append('<br>');
   $("#splashArea").append('<h3 id = "ua-display"></h3>');
-
-
-
   $("#question").text(questions[round].question);
   $("#ca-text").text("The Correct Answer was ...");
   $("#ca-display").text(questions[round][correctAnswer]);
@@ -134,10 +134,11 @@ function scoreScreen() {
   $("#timeout").text("Questions not Answered " + timeout);
   $("#splashArea").append('<br>');
   $("#splashArea").append('<button id = "playAgain"></button>');
-  $("#playAgain").addClass("btn btn-info text-white")
+  $("#playAgain").addClass("btn btn-secondary text-white")
   $("#playAgain").text("Play Again?");
-  $(document.body).on("click","#playAgain", function(){
-    beginGame()});
+  $(document.body).on("click", "#playAgain", function () {
+    beginGame()
+  });
 }
 
 
@@ -171,6 +172,11 @@ function decrement() {
     showResult();
     timeout++;
   }
+  else if (quizTimer % 10 === 0) {
+    backgroundImage();
+    quizTimer--;
+    $("#clock").html("<h1>" + quizTimer + "</h1>");
+  }
   else {
     quizTimer--;
     $("#clock").html("<h1>" + quizTimer + "</h1>");
@@ -192,18 +198,18 @@ function click() {
         stopTimer();
         correct++;
         showResult();
-        $(document.body).off().on("click", ".answers", function (){
+        $(document.body).off().on("click", ".answers", function () {
           userGuess = $(this).attr("id");
-      });
+        });
       }
       else {
         guessMade = true;
         stopTimer();
         wrong++;
         showResult();
-        $(document.body).off().on("click", ".answers", function (){
+        $(document.body).off().on("click", ".answers", function () {
           userGuess = $(this).attr("id");
-      });
+        });
       }
 
     });
